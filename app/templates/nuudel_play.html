@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Игра{% endblock %}
+
+{% block content %}
+<h2>Угадай слово!</h2>
+
+<p class="lead">Перемешанное слово:</p>
+<div class="display-4 mb-4">{{ scrambled_word }}</div>
+
+<form method="post" action="/submit_answer">
+  <div class="mb-3">
+    <input type="text" class="form-control" name="guess" placeholder="Твой вариант..." required>
+  </div>
+  <button type="submit" class="btn btn-primary">Проверить</button>
+</form>
+
+{% if feedback %}
+<div class="alert alert-info mt-3">
+  {{ feedback }}
+</div>
+{% endif %}
+{% endblock %}

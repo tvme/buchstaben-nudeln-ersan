@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Таблица результатов{% endblock %}
+
+{% block content %}
+<h2>Рейтинг игроков</h2>
+
+{% if feedback %}
+<div class="alert alert-info">
+  {{ feedback }}
+</div>
+{% endif %}
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Имя</th>
+      <th>Очки</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for player in players %}
+    <tr>
+      <td>{{ loop.index }}</td>
+      <td>{{ player.name }}</td>
+      <td>{{ player.score }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

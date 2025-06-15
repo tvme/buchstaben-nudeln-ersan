@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Главная{% endblock %}
+
+{% block content %}
+<h1>Nuudel — игра-лапша из букв</h1>
+<p>Выбери тему и попробуй угадать слово, буквы которого перемешались!</p>
+
+{% if feedback %}
+<div class="alert alert-info">
+  {{ feedback }}
+</div>
+{% endif %}
+
+<form method="post" action="/play">
+  <label for="topic" class="form-label">Тема:</label>
+  <select class="form-select" id="topic" name="topic">
+    <option value="animals">Животные</option>
+    <option value="kitchen">Кухня</option>
+    <option value="tools">Инструменты</option>
+  </select>
+  <button type="submit" class="btn btn-primary mt-3">Начать игру</button>
+</form>
+{% endblock %}
