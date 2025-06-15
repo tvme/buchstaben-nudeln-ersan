@@ -14,7 +14,11 @@
   </nav>
 
   <main class="container">
-    {% block content %}{% endblock %}
+    <div class="row">
+      <div class="col-4 mx-auto">
+        {% block content %}{% endblock %}
+      </div>
+    </div>
   </main>
 
   {% block scripts %}

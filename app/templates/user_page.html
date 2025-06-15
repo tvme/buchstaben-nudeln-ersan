@@ -12,8 +12,9 @@
 {% endif %}
 
 <ul class="list-group">
-  <li class="list-group-item"><strong>Email:</strong> {{ user.email }}</li>
   <li class="list-group-item"><strong>Имя:</strong> {{ user.name }}</li>
+  <li class="list-group-item"><strong>Очки:</strong> {{ user.score }}</li>
+  <li class="list-group-item"><strong>Email:</strong> {{ user.email }}</li>
   <li class="list-group-item"><strong>Пароль:</strong> {{ user.password }}</li>
 </ul>
 {% endblock %}

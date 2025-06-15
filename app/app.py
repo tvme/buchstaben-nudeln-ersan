@@ -22,7 +22,7 @@ def login():
 
 @app.route("/user")
 def user_page():
-    user = {"email": "test@example.com", "name": "Саша", "password": "••••••"}
+    user = {"email": "test@example.com", "name": "Саша", "password": "••••••", "score": 120}
     return render_template("user_page.html", user=user, feedback="Добро пожаловать, Саша!")
 
 @app.route("/rating")
@@ -30,7 +30,9 @@ def user_table_page():
     players = [
         {"name": "Саша", "score": 120},
         {"name": "Аня", "score": 95},
-        {"name": "Игорь", "score": 88}
+        {"name": "Игорь", "score": 88},
+        {"name": "Мария", "score": 75},
+        {"name": "Nikolai", "score": 60}
     ]
     return render_template("user_table_page.html", players=players)
 
@@ -41,11 +43,8 @@ def play():
 
 @app.route("/submit_answer", methods=["POST"])
 def submit_answer():
-    guess = request.form.get("guess")
-    if guess is not None and guess.lower() == "барка":
-        feedback = "Правильно!"
-    else:
-        feedback = "Попробуй ещё раз"
+    guess = request.form.get("guess", "")
+    feedback = "Правильно!" if guess.lower() == "барка" else "Попробуй ещё раз"
     return render_template("nuudel_play.html", scrambled_word="АРБКА", feedback=feedback)
 
 if __name__ == "__main__":
