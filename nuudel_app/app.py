@@ -1,6 +1,7 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for
+from nuudel_app import create_app
 
-app = Flask(__name__)
+app = create_app()
 
 @app.route("/", methods=["GET", "POST"])
 def home():
