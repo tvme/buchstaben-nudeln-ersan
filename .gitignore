@@ -99,6 +99,7 @@ ipython_config.py
 # Environments
 .env
 .venv
+env_www/
 env/
 venv/
 ENV/
