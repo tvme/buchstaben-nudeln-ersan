@@ -1,5 +1,9 @@
 from flask import render_template, request, redirect, url_for
 from nuudel_app import create_app
+from werkzeug.security import generate_password_hash, check_password_hash
+from nuudel_app.models import User, Word
+from nuudel_app import db
+
 
 app = create_app()
 
@@ -13,8 +17,20 @@ def home():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        email = request.form.get("email")
-        password = request.form.get("password")
+        mode = request.form.get("mode")
+        print(f"Login mode: {mode}")
+        email = request.form.get("email", "")
+        password = request.form.get("password", "")
+        if mode == "register":
+            name = request.form.get("name", "")
+            confirm_password = request.form.get("confirm", "")
+            if password != confirm_password:
+                return render_template("login.html", error="Пароли не совпадают")
+            hashed_password = generate_password_hash(password)  # по умолчанию метод='pbkdf2:sha256'
+            user = User(email=email, name=name, password=hashed_password)
+            db.session.add(user)
+            db.session.commit()
+
         if email == "test@example.com" and password == "123":
             return redirect(url_for("user_page"))
         else:
