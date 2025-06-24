@@ -1,7 +1,7 @@
 from flask import render_template, request, redirect, url_for
 from nuudel_app import create_app
 from werkzeug.security import generate_password_hash, check_password_hash
-from nuudel_app.models import User, Word
+from nuudel_app.models import User
 from nuudel_app import db
 
 
@@ -27,14 +27,21 @@ def login():
             if password != confirm_password:
                 return render_template("login.html", error="Пароли не совпадают")
             hashed_password = generate_password_hash(password)  # по умолчанию метод='pbkdf2:sha256'
-            user = User(email=email, name=name, password=hashed_password)
-            db.session.add(user)
-            db.session.commit()
-
-        if email == "test@example.com" and password == "123":
-            return redirect(url_for("user_page"))
-        else:
-            return render_template("login.html", error="Неверный email или пароль")
+            user_adata = User(email=email, name=name, password=hashed_password)
+            try:
+                db.session.add(user_adata)
+                db.session.commit()
+            except:
+                return render_template("login.html", error="Ошибка базы данных")
+        if mode == "login":
+            try:
+                user_login = user = User.query.filter_by(email=email).first()
+            except:
+                return render_template("login.html", error="Неверный email")
+            if check_password_hash(user_login.password, password):
+                return redirect(url_for("user_page"))
+            else:
+                return render_template("login.html", error="Неверный пароль")
     return render_template("login.html")
 
 @app.route("/user")
