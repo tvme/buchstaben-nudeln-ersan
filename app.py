@@ -4,7 +4,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from nuudel_app.models import User
 from nuudel_app import db
 
-
 app = create_app()
 
 @app.route("/", methods=["GET", "POST"])
@@ -33,9 +32,10 @@ def login():
                 db.session.commit()
             except:
                 return render_template("login.html", error="Ошибка базы данных")
+            return redirect(url_for("user_page"))
         if mode == "login":
             try:
-                user_login = user = User.query.filter_by(email=email).first()
+                user_login = User.query.filter_by(email=email).first()
             except:
                 return render_template("login.html", error="Неверный email")
             if check_password_hash(user_login.password, password):
@@ -51,16 +51,14 @@ def user_page():
 
 @app.route("/rating")
 def user_table_page():
-    players = [
-        {"name": "Саша", "score": 120},
-        {"name": "Аня", "score": 95},
-        {"name": "Игорь", "score": 88},
-        {"name": "Мария", "score": 75},
-        {"name": "Nikolai", "score": 60}
-    ]
+    try:
+        players = User.query.order_by(User.score).all()
+    except:
+        return render_template("login.html", error="Ошибка базы данных")
+    print(players)
     return render_template("user_table_page.html", players=players)
 
-@app.route("/play")
+@app.route("/play", methods=["GET", "POST"])
 def play():
     scrambled_word = "АРБКА"  # Например, "БАРКА"
     return render_template("nuudel_play.html", scrambled_word=scrambled_word)
