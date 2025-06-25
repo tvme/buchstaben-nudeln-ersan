@@ -1,10 +1,17 @@
 from flask import render_template, request, redirect, url_for
 from nuudel_app import create_app
 from werkzeug.security import generate_password_hash, check_password_hash
-from nuudel_app.models import User
+from nuudel_app.models import User, Word
 from nuudel_app import db
 
 app = create_app()
+# with app.app_context():
+#     word_adata = Word(text="АРБКА", word="барк", category="тест")
+#     print("1..ок")
+#     db.session.add(word_adata)
+#     print("2..ок")
+#     db.session.commit()
+#     print("3..ок")
 
 @app.route("/", methods=["GET", "POST"])
 def home():
@@ -60,8 +67,16 @@ def user_table_page():
 
 @app.route("/play", methods=["GET", "POST"])
 def play():
-    scrambled_word = "АРБКА"  # Например, "БАРКА"
-    return render_template("nuudel_play.html", scrambled_word=scrambled_word)
+    try:
+        text = Word.query.order_by(db.func.random()).first()
+        scrambled_word = text.text
+        print("4..ок")
+        wort = Word.query.order_by(db.func.random()).first()
+        etalon = wort.word
+        print("5..ок")
+    except:
+        return render_template("nuudel_play.html", error="Ошибка базы данных")
+    return render_template("nuudel_play.html", scrambled_word=scrambled_word, etalon=etalon)
 
 @app.route("/submit_answer", methods=["POST"])
 def submit_answer():

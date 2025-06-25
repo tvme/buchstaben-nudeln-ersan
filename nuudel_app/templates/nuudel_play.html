@@ -14,6 +14,12 @@
 </div>
 {% endif %}
 
+{% if error %}
+<div class="alert alert-danger">
+  {{ error }}
+</div>
+{% endif %}
+
 <form method="post" action="/submit_answer">
   <div class="mb-3">
     <input type="text" class="form-control" name="guess" placeholder="Твой вариант..." required>
