@@ -12,9 +12,8 @@ class User(db.Model):
     
 class Word(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    text = db.Column(db.String(100), nullable=False)
     word = db.Column(db.String(100), nullable=False)
     category = db.Column(db.String(100), nullable=False)
 
     def __repr__(self):
-        return f'Word({self.text}, {self.category})'
+        return f'Word({self.word}, {self.category})'
