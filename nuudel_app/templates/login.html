@@ -11,6 +11,12 @@
 </div>
 {% endif %}
 
+{% if feedback %}
+<div class="alert alert-info">
+  {{ feedback }}
+</div>
+{% endif %}
+
 <form method="post" action="/login" id="auth-form">
   <input type="hidden" name="mode" id="form-mode" value="login">
 
