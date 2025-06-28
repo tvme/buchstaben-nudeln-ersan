@@ -1,4 +1,4 @@
-from nuudel_app import db
+from nuudel_app import db, create_app
 from nuudel_app.models import Word
 
 class Nuudel_game():
@@ -26,19 +26,21 @@ class Nuudel_game():
         pass
 
 if __name__ == "__main__":
-    animals = [
-        "тигр",
-        "лев",
-        "слон",
-        "зебра",
-        "волк",
-        "медведь",
-        "лисица",
-        "кенгуру",
-        "жираф",
-        "панда"
+    app = create_app()
+    with app.app_context():
+        animals = [
+            "тигр",
+            "лев",
+            "слон",
+            "зебра",
+            "волк",
+            "медведь",
+            "лисица",
+            "кенгуру",
+            "жираф",
+            "панда"
         ]
-    for w in animals:
-        word_adata = Word(word=w, category="animals")
-        db.session.add(word_adata)
+        for w in animals:
+            word_data = Word(word=w, category="animals")
+            db.session.add(word_data)
         db.session.commit()

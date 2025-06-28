@@ -5,13 +5,7 @@ from nuudel_app.models import User, Word
 from nuudel_app import db
 
 app = create_app()
-with app.app_context():
-    word_adata = Word(text="АРБКА", word="баркa", category="animals")
-    print("1..ок")
-    db.session.add(word_adata)
-    print("2..ок")
-    db.session.commit()
-    print("3..ок")
+
 
 @app.route("/", methods=["GET", "POST"])
 def home():
@@ -73,15 +67,9 @@ def user_table_page():
 
 @app.route("/play", methods=["POST"])
 def play():
-    topic = request.form.get("topic")
-    try:
-        word = Word.query.filter_by(category=topic).order_by(db.func.random()).first()
-        print(word)
-        etalon = word.word
-        scrambled_word = word.text
-        print("Word...ок")
-    except:
-        return render_template("nuudel_play.html", error="Ошибка базы данных")
+    topic = "animals"
+    scrambled_word = 'ГИРТ'
+    etalon = 'ТИГР'
     return render_template("nuudel_play.html", scrambled_word=scrambled_word, etalon=etalon)
 
 @app.route("/submit_answer", methods=["POST"])
