@@ -50,9 +50,9 @@ if __name__ == "__main__":
             db.session.commit()
             return "update_word status: success"
 
-    wors = [
-        "тигр", "лев", "слон", "зебра", "волк",
-        "медведь", "лисица", "кенгуру", "жираф", "панда"
-    ]
-    print(update_category("animals"))
-    print(update_word(wors, "animals"))
+        wors = [
+            "тигр", "лев", "слон", "зебра", "волк",
+            "медведь", "лисица", "кенгуру", "жираф", "панда"
+        ]
+        print(update_category("animals"))
+        print(update_word(wors, "animals"))
