@@ -2,19 +2,15 @@
 
 {% block title %}Главная{% endblock %}
 
-{% block content %}
+{% block title2 %}
 <h1>Nuudel<br>лапша из букв</h1>
 <p>Выбери тему и попробуй угадать слово, буквы которого перемешались!</p>
+{% endblock %}
 
-{% if feedback %}
-<div class="alert alert-info">
-  {{ feedback }}
-</div>
-{% endif %}
-
+{% block content %}
 <form method="post" action="/play">
-  <label for="topic" class="form-label">Тема:</label>
-  <select class="form-select" id="topic" name="topic">
+  <label for="category" class="form-label">Тема:</label>
+  <select class="form-select" id="category" name="category">
     <option value="animals">Животные</option>
     <option value="kitchen">Кухня</option>
     <option value="tools">Инструменты</option>

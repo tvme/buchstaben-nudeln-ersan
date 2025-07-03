@@ -2,14 +2,11 @@
 
 {% block title %}Профиль{% endblock %}
 
-{% block content %}
+{% block title %}
 <h2>Профиль пользователя</h2>
+{% endblock %}
 
-{% if feedback %}
-<div class="alert alert-info">
-  {{ feedback }}
-</div>
-{% endif %}
+{% block content %}
 
 <ul class="list-group">
   <li class="list-group-item"><strong>Имя:</strong> {{ user.name }}</li>

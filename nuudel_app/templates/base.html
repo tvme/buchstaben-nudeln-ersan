@@ -19,10 +19,31 @@
       </ul>
     </div>
   </nav>
+  <main class="container">
 
+    
+  </main>
   <main class="container">
     <div class="row">
       <div class="col-4 mx-auto">
+        {% block title2 %}{% endblock %}
+        {% if success %}
+          <div class="alert alert-success mt-3">
+          {{ success }}
+          </div>
+        {% endif %}
+
+        {% if feedback %}
+          <div class="alert alert-info mt-3">
+            {{ feedback }}
+          </div>
+        {% endif %}
+
+        {% if error %}
+          <div class="alert alert-danger">
+            {{ error }}
+          </div>
+        {% endif %}
         {% block content %}{% endblock %}
       </div>
     </div>
