@@ -2,7 +2,7 @@ from flask import render_template, request, redirect, url_for, session, g
 from nuudel_app import create_app
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
-from nuudel_app.models import User
+from nuudel_app.models import User, Category
 from nuudel_app import db
 from nuudel_app.nuudel_game import Nuudel_game
 
@@ -34,7 +34,12 @@ def home():
     if request.method == "POST":
         category = request.form.get("category")
         return redirect(url_for("play", category=category))
-    return render_template("home.html", feedback="Добро пожаловать!")
+    try:
+        category_for_tabel = Category.query.all()
+    except:
+        return render_template("login.html", error="Ошибка базы данных")
+    print(category_for_tabel)
+    return render_template("home.html", category_for_tabel=category_for_tabel, feedback="Добро пожаловать!")
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -66,7 +71,6 @@ def login():
             session["user_id"] = user_data.id
             session["user_email"] = user_data.email
             session["user_name"] = user_data.name
-            session["user_score"] = user_data.score
             return redirect(url_for("user_page"))
         if mode == "login":
             try:
@@ -80,7 +84,6 @@ def login():
                 session["user_id"] = user_login.id
                 session["user_email"] = user_login.email
                 session["user_name"] = user_login.name
-                session["user_score"] = user_login.score
                 return redirect(url_for("user_page"))
             else:
                 return render_template("login.html", error="Неверный пароль")
@@ -91,7 +94,8 @@ def login():
 def user_page():
     user_obj = User.query.filter_by(name=session["user_name"]).first()
     masked_password = "•" * user_obj.len_pass  # длина скрытого пароля
-    user = {"email": session["user_email"], "name": session["user_name"], "password": masked_password, "score": session["user_score"]}
+    score = user_obj.score
+    user = {"email": session["user_email"], "name": session["user_name"], "password": masked_password, "score": score}
     return render_template("user_page.html", user=user, feedback=f"Добро пожаловать, {session["user_name"]}!")
 
 @app.route("/rating")

@@ -9,12 +9,24 @@
 
 {% block content %}
 <form method="post" action="/play">
-  <label for="category" class="form-label">Тема:</label>
-  <select class="form-select" id="category" name="category">
-    <option value="animals">Животные</option>
-    <option value="kitchen">Кухня</option>
-    <option value="tools">Инструменты</option>
-  </select>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Тема</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for category in category_for_tabel %}
+      <tr>
+        <td>
+          <label>
+            <input type="radio" name="category" value="{{ category.id }}"> {{ category.category }}
+          </label>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
   <button type="submit" class="btn btn-primary mt-3">Начать игру</button>
 </form>
 {% endblock %}
