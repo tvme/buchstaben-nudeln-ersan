@@ -9,6 +9,7 @@
 </form>
 
 <form method="post" action="/play">
+  <input type="hidden" name="category" value="{{ category }}">
   <button type="submit" class="btn btn-primary">Играть дальше</button>
 </form>
 {% endblock %}

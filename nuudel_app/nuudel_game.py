@@ -7,6 +7,7 @@ class Nuudel_game():
         self.db = db
         self.word = None
         self.category = "animals"
+        self.nuudel_word = "онлс"
 
     def get_nuudel_word(self, category):
         """
@@ -19,15 +20,20 @@ class Nuudel_game():
         self.category = category
         try:
             category_id = Category.query.filter_by(category=self.category).first()
-        except:
+            if not category_id:
+                return "error: Not_category"
+        except Exception as e:
+            print(f"Ошибка при поиске категории: {e}")
             return "error: Not_category"
+        
         word = Word.query.filter_by(category_id=category_id.id).order_by(db.func.random()).first()
         if not word:
             return "error: Not_word"
+        
         self.word = word.word
         print(self.word)
-        nuudel_word = ''.join(random.sample(self.word, len(self.word)))
-        return nuudel_word
+        self.nuudel_word = ''.join(random.sample(self.word, len(self.word)))
+        return self.nuudel_word
 
     def check_answer(self, answer_str):
         """
@@ -74,7 +80,7 @@ if __name__ == "__main__":
             "медведь", "лисица", "кенгуру", "жираф", "панда", 
             "олень", "кошка",
         ]
-        print(update_category("kitchen"))
+        print(update_category("animals"))
         print(update_word(wors, "animals"))
         # game = Nuudel_game()
         # print(game.get_nuudel_word("animals"))

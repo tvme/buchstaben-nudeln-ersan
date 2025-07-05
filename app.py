@@ -54,8 +54,9 @@ def login():
                 return render_template("login.html", error="Ошибка базы данных")
             if password != confirm_password:
                 return render_template("login.html", error="Пароли не совпадают")
+            len_pass = len(password)
             hashed_password = generate_password_hash(password)
-            user_data = User(email=email, name=name, password=hashed_password)
+            user_data = User(email=email, name=name, password=hashed_password, len_pass=len_pass)
             try:
                 db.session.add(user_data)
                 db.session.commit()
@@ -65,17 +66,21 @@ def login():
             session["user_id"] = user_data.id
             session["user_email"] = user_data.email
             session["user_name"] = user_data.name
+            session["user_score"] = user_data.score
             return redirect(url_for("user_page"))
         if mode == "login":
             try:
                 user_login = User.query.filter_by(email=email).first()
             except:
                 return render_template("login.html", error="Неверный email")
+            if user_login is None:
+                return render_template("login.html", error="Пользователь не найден")
             if check_password_hash(user_login.password, password):
                 session.clear()
                 session["user_id"] = user_login.id
                 session["user_email"] = user_login.email
                 session["user_name"] = user_login.name
+                session["user_score"] = user_login.score
                 return redirect(url_for("user_page"))
             else:
                 return render_template("login.html", error="Неверный пароль")
@@ -84,8 +89,10 @@ def login():
 @app.route("/user")
 @login_required
 def user_page():
-    user = {"email": "test@example.com", "name": "Саша", "password": "••••••", "score": 120}
-    return render_template("user_page.html", user=user, feedback="Добро пожаловать, Саша!")
+    user_obj = User.query.filter_by(name=session["user_name"]).first()
+    masked_password = "•" * user_obj.len_pass  # длина скрытого пароля
+    user = {"email": session["user_email"], "name": session["user_name"], "password": masked_password, "score": session["user_score"]}
+    return render_template("user_page.html", user=user, feedback=f"Добро пожаловать, {session["user_name"]}!")
 
 @app.route("/rating")
 @login_required
@@ -123,12 +130,17 @@ def submit_answer():
     guess = request.form.get("guess", "")
 
     if game.check_answer(guess.lower()) == 10:
-        success = "Правильно! +10"
-        # return render_template("nuudel_play_success.html", success=success, category=game.category)
-        return render_template("nuudel_play_success.html", success=success)
+        try:
+            success = "Правильно! +10"
+            user = User.query.filter_by(name=session["user_name"]).first()
+            user.score += 10
+            db.session.commit()
+        except:
+            return render_template("nuudel_play_success.html", error="Ошибка базы данных", category=game.category)
+        return render_template("nuudel_play_success.html", success=success, category=game.category)
     else:
         feedback = "Попробуй ещё раз"
-        return render_template("nuudel_play.html", scrambled_word=game.word, feedback=feedback)
+        return render_template("nuudel_play.html", scrambled_word=game.nuudel_word, feedback=feedback)
 
 if __name__ == "__main__":
     app.run(debug=True)
