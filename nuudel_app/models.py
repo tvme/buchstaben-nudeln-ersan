@@ -32,7 +32,7 @@ class Word(db.Model):
         self.category_ref = category_ref
 
     def __repr__(self):
-        return f'Word({self.word}, {self.category})'
+        return f'Word({self.word}, {self.category_ref.category})'
 
 class Category(db.Model):
     __tablename__ = 'category'

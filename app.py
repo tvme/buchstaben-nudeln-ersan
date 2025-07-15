@@ -77,7 +77,7 @@ def login():
                 user_login = User.query.filter_by(email=email).first()
             except:
                 return render_template("login.html", error="Неверный email")
-            if user_login is None:
+            if not user_login:
                 return render_template("login.html", error="Пользователь не найден")
             if check_password_hash(user_login.password, password):
                 session.clear()
