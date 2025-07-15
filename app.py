@@ -102,7 +102,7 @@ def user_page():
 @login_required
 def user_table_page():
     try:
-        players = User.query.order_by(User.score).all()
+        players = User.query.order_by(User.score.desc()).all()
     except:
         return render_template("login.html", error="Ошибка базы данных")
     print(players)
@@ -112,7 +112,7 @@ def user_table_page():
 @login_required
 def play():
     category = request.form.get("category", "")
-
+    print(category)
     try:
         scrambled_word = game.get_nuudel_word(category)
 
