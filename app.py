@@ -89,6 +89,12 @@ def login():
                 return render_template("login.html", error="Неверный пароль")
     return render_template("login.html")
 
+@app.route("/logout")
+@login_required
+def logout():
+    session.clear()
+    return redirect(url_for('home'))
+
 @app.route("/user")
 @login_required
 def user_page():

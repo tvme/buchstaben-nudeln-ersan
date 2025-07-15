@@ -6,8 +6,8 @@ class Nuudel_game():
     def __init__(self):
         self.db = db
         self.word = None
-        self.category = "animals"
-        self.nuudel_word = "онлс"
+        self.category = None
+        self.nuudel_word = None
 
     def get_nuudel_word(self, category):
         """
@@ -26,7 +26,7 @@ class Nuudel_game():
             print(f"Ошибка при поиске категории: {e}")
             return "error: Not_category"
         
-        word = Word.query.filter_by(category_id=category_id.id).order_by(db.func.random()).first()
+        word = Word.query.filter_by(category_id=category_id.id).order_by(self.db.func.random()).first()
         if not word:
             return "error: Not_word"
         
@@ -47,34 +47,34 @@ class Nuudel_game():
             return 10
         return self.word
 
+    def update_category(self, category_input):    
+        existing = Category.query.filter_by(category=category_input).first()
+        if existing:
+            return "update_category status: Категория уже существует"
+        category = Category(category=category_input)
+        self.db.session.add(category)
+        self.db.session.commit()
+        return "update_category status: success"
+    
+    def update_word(self, wors, category_save):
+        category = Category.query.filter_by(category=category_save).first()
+        if not category:
+            return f"Категория {category_save} не найдена"
+
+        update_wors = 0
+
+        for w in wors:
+            existing_word = Word.query.filter_by(word=w, category_id=category.id).first()
+            if not existing_word:
+                word_data = Word(word=w, category_ref=category)
+                self.db.session.add(word_data)
+                update_wors += 1
+        self.db.session.commit()
+        return f"update_word status: success  update_wors: {update_wors}"
+    
 if __name__ == "__main__":
     app = create_app()
-    with app.app_context():
-        def update_category(category_input):    
-            existing = Category.query.filter_by(category=category_input).first()
-            if existing:
-                return "update_category status: Категория уже существует"
-            category = Category(category=category_input)
-            db.session.add(category)
-            db.session.commit()
-            return "update_category status: success"
-
-        def update_word(wors, category_save):
-            category = Category.query.filter_by(category=category_save).first()
-            if not category:
-                return f"Категория {category_save} не найдена"
-
-            update_wors = 0
-
-            for w in wors:
-                existing_word = Word.query.filter_by(word=w, category_id=category.id).first()
-                if not existing_word:
-                    word_data = Word(word=w, category_ref=category)
-                    db.session.add(word_data)
-                    update_wors += 1
-            db.session.commit()
-            return f"update_word status: success  update_wors: {update_wors}"
-        
+    with app.app_context():        
         animals = [
             "собака", "кошка", "лошадь", "корова", "свинья",
             "овца", "коза", "курица", "утка", "гусь",
@@ -93,11 +93,12 @@ if __name__ == "__main__":
             "терка", "половник", "дуршлаг", "холодильник", "духовка",
             "плита", "микроволновка", "блендер", "чайная ложка", "кухонные весы"
         ]
-        print(update_category("animals"))
-        print(update_category("kitchen"))
-        print(update_category("tools"))
-        print(update_word(animals, "animals"))
-        print(update_word(tools, "tools"))
-        print(update_word(kitchen_items, "kitchen"))
+        gm = Nuudel_game()
+        print(gm.update_category("animals"))
+        print(gm.update_category("kitchen"))
+        print(gm.update_category("tools"))
+        print(gm.update_word(animals, "animals"))
+        print(gm.update_word(tools, "tools"))
+        print(gm.update_word(kitchen_items, "kitchen"))
         # game = Nuudel_game()
         # print(game.get_nuudel_word("animals"))
