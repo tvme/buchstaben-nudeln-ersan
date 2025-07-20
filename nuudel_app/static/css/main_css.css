@@ -1,6 +1,6 @@
 .sustem{
     opacity: 0;
 }
-.delete{
-    color: red;
+#button_logout{
+    margin-top: 2%;
 }

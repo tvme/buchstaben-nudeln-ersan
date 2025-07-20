@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Обновление Аккаунта{% endblock %}
+
+{% block content %}
+<h2 id="form-title">Обновление Аккаунта</h2>
+
+<form method="post" action="/user_update" id="auth-form">
+
+  <div class="mb-3">
+    <label for="email" class="form-label">Введите новый email:</label>
+    <input type="email" class="form-control" id="email" name="email" required>
+  </div>
+
+  <div class="mb-3">
+    <label for="name" class="form-label">Введите новое имя:</label>
+    <input type="text" class="form-control" id="name" name="name" required>
+  </div>
+
+  <div class="mb-3">
+    <label for="password" class="form-label">Введите новый пароль:</label>
+    <input type="password" class="form-control" id="password" name="password" required>
+  </div>
+
+  <div class="mb-3">
+    <label for="confirm" class="form-label">Повторите новый пароль:</label>
+    <input type="password" class="form-control" id="confirm" name="confirm" required>
+  </div>
+
+  <button type="submit" class="btn btn-success" id="submit-btn">Обновить</button>
+</form>
+{% endblock %}

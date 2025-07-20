@@ -6,15 +6,13 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     name = db.Column(db.String(50), nullable=False)
     password = db.Column(db.String(200), nullable=False)  # Store hashed passwords
-    len_pass = db.Column(db.Integer, nullable=False)
     score = db.Column(db.Integer, default=0)
     
-    def __init__(self, email, name, password, len_pass, score=0):
+    def __init__(self, email, name, password, score=0):
         self.email = email
         self.name = name
         self.password = password
         self.score = score
-        self.len_pass = len_pass
 
     def __repr__(self):
         return f'User({self.name}, {self.email}, {self.score})'

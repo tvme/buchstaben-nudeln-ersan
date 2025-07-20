@@ -59,9 +59,8 @@ def login():
                 return render_template("login.html", error="Ошибка базы данных")
             if password != confirm_password:
                 return render_template("login.html", error="Пароли не совпадают")
-            len_pass = len(password)
             hashed_password = generate_password_hash(password)
-            user_data = User(email=email, name=name, password=hashed_password, len_pass=len_pass)
+            user_data = User(email=email, name=name, password=hashed_password)
             try:
                 db.session.add(user_data)
                 db.session.commit()
@@ -95,11 +94,57 @@ def logout():
     session.clear()
     return redirect(url_for('home'))
 
+@app.route("/delete_akunt")
+@login_required
+def delete_akunt():
+    user = User.query.get(session["user_id"])
+    if user:
+        try:
+            db.session.delete(user)
+            db.session.commit()
+            session.clear()
+            return render_template("home.html", success = "Пользователь был удалён")
+        except:
+            return render_template("home.html", error="Ошибка базы данных")
+    else:
+        return render_template("home.html", error="Пользователь не найден")
+
+@app.route("/user_update", methods=["POST", "GET"])
+@login_required
+def user_update():
+    if request.method == "POST":
+        email = request.form.get("email", "")
+        name = request.form.get("name", "")
+        password = request.form.get("password", "")
+        confirm = request.form.get("confirm", "")
+        if confirm == password:
+            try:
+                user = User.query.get(session["user_id"])
+                
+                if not user:
+                    return render_template("login.html", error="Пользователь не найден")
+                
+                user.email = email
+                user.name = name
+                user.password = generate_password_hash(password)
+
+                db.session.commit()
+                
+                session.clear()
+                session["user_email"] = email
+                session["user_name"] = name
+            except:
+                return render_template("login.html", error="Ошибка базы данных")
+        else:
+            return render_template("user_update.html", error="Пароли не совпадают")
+        return redirect(url_for('user_page'))
+    return render_template("user_update.html")
+
 @app.route("/user")
 @login_required
 def user_page():
     user_obj = User.query.filter_by(name=session["user_name"]).first()
-    masked_password = "•" * user_obj.len_pass  # длина скрытого пароля
+    masked_password = "•••••"
     score = user_obj.score
     user = {"email": session["user_email"], "name": session["user_name"], "password": masked_password, "score": score}
     return render_template("user_page.html", user=user, feedback=f"Добро пожаловать, {session["user_name"]}!")

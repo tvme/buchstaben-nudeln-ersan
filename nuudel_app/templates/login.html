@@ -13,9 +13,9 @@
     <input type="email" class="form-control" id="email" name="email" required>
   </div>
   
-  <div class="mb-3">
+  <div class="mb-3 d-none" id="name-group">
     <label for="name" class="form-label">Имя:</label>
-    <input type="text" class="form-control" id="name" name="name" required>
+    <input type="text" class="form-control" id="name" name="name" required disabled>
   </div>
 
   <div class="mb-3">
@@ -25,7 +25,7 @@
 
   <div class="mb-3 d-none" id="confirm-group">
     <label for="confirm" class="form-label">Повторите пароль:</label>
-    <input type="password" class="form-control" id="confirm" name="confirm">
+    <input type="password" class="form-control" id="confirm" name="confirm" required disabled>
   </div>
 
   <button type="submit" class="btn btn-success" id="submit-btn">Войти</button>
@@ -44,9 +44,13 @@
 document.addEventListener('DOMContentLoaded', function () {
   const modeInput = document.getElementById('form-mode');
   const confirmGroup = document.getElementById('confirm-group');
+  const nameGroup = document.getElementById('name-group');
   const toggleLink = document.getElementById('toggle-link');
   const formTitle = document.getElementById('form-title');
   const submitBtn = document.getElementById('submit-btn');
+
+  const nameInput = document.getElementById('name');
+  const confirmInput = document.getElementById('confirm');
 
   toggleLink.addEventListener('click', function (e) {
     e.preventDefault();
@@ -54,13 +58,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (isLogin) {
       modeInput.value = 'register';
+      nameGroup.classList.remove('d-none');
       confirmGroup.classList.remove('d-none');
+      nameInput.disabled = false;
+      confirmInput.disabled = false;
       toggleLink.textContent = 'Уже есть аккаунт? Войти';
       formTitle.textContent = 'Регистрация';
       submitBtn.textContent = 'Зарегистрироваться';
     } else {
       modeInput.value = 'login';
+      nameGroup.classList.add('d-none');
       confirmGroup.classList.add('d-none');
+      nameInput.disabled = true;
+      confirmInput.disabled = true;
       toggleLink.textContent = 'Нет аккаунта? Зарегистрироваться';
       formTitle.textContent = 'Вход';
       submitBtn.textContent = 'Войти';
