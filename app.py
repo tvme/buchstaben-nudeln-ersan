@@ -138,7 +138,7 @@ def user_update():
         else:
             return render_template("user_update.html", error="Пароли не совпадают")
         return redirect(url_for('user_page'))
-    return render_template("user_update.html")
+    return render_template("user_update.html", email=session["user_email"], name=session["user_name"])
 
 @app.route("/user")
 @login_required
