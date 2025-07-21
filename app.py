@@ -173,7 +173,7 @@ def play():
         if scrambled_word == "error: Not_word":
             return render_template("nuudel_play.html", error="Нет слов в этой категории.")
         
-        return render_template("nuudel_play.html", scrambled_word=scrambled_word)
+        return render_template("nuudel_play.html", scrambled_word=scrambled_word, word=game.word)
     
     except Exception as er:
         print(er)
@@ -183,15 +183,16 @@ def play():
 @login_required
 def submit_answer():
     guess = request.form.get("guess", "")
+    hinweis_anzal = request.form.get("hinweis_anzal", "")
 
     if game.check_answer(guess.lower()) == 10:
         try:
             difficulty = Category.query.filter_by(category=game.category).first()
-            score = 10
+            score = 10 - 5 * int(hinweis_anzal or 0)
             if difficulty.difficulty == "medium":
-                score = 20
+                score += 10
             if difficulty.difficulty == "hard":
-                score = 30
+                score += 20
             success = f"Правильно! +{score}"
             user = User.query.filter_by(name=session["user_name"]).first()
             user.score += score
@@ -206,5 +207,3 @@ def submit_answer():
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-# return render_template("nuudel_play_check.html", feedback=feedback, error="Ошибка базы данных", success=success)
