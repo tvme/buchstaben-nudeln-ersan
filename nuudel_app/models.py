@@ -21,6 +21,7 @@ class Word(db.Model):
     __tablename__ = 'word'
     id = db.Column(db.Integer, primary_key=True)
     word = db.Column(db.String(100), nullable=False)
+    
 
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
     category_ref = db.relationship('Category', back_populates='words')
@@ -36,8 +37,10 @@ class Category(db.Model):
     __tablename__ = 'category'
     id = db.Column(db.Integer, primary_key=True)
     category = db.Column(db.String(100), nullable=False, unique=True)
+    difficulty = db.Column(db.String(20), nullable=False)
 
-    def __init__(self, category):
+    def __init__(self, category, difficulty):
         self.category = category
+        self.difficulty = difficulty
 
     words = db.relationship('Word', back_populates='category_ref', cascade="all, delete-orphan")

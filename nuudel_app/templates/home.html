@@ -11,16 +11,21 @@
 <form method="POST" action="{{ url_for('play') }}">
   <table class="table table-hover">
     <thead>
-      <tr><th>Тема</th></tr>
+      <tr>
+        <th>Тема</th>
+        <th>Сложность</th>
+      </tr>
     </thead>
     <tbody>
       {% for category in category_for_tabel %}
       <tr>
         <td>
           <label>
-            <input type="radio" name="category" value="{{ category.category }}" required> {{ category.category }}
+            <input type="radio" name="category" value="{{ category.category }}" required>
+            {{ category.category }}
           </label>
         </td>
+        <td>{{ category.difficulty }}</td>
       </tr>
       {% endfor %}
     </tbody>

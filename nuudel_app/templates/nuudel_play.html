@@ -16,9 +16,11 @@
   <div class="mb-3">
     <input type="text" class="form-control" name="guess" placeholder="Твой вариант..." required>
   </div>
-  <button type="submit" class="btn btn-primary">Проверить</button>
-  <input class="sustem", name="etalon", id="etalon", value="{{ etalon }}">
-  <input class="sustem", name="scrambled_word", id="scrambled_word", value="{{ scrambled_word }}">
+<div class="d-flex gap-3">
+    <button type="submit" class="btn btn-success">Проверить</button>
 </form>
-
+  <form method="get" action="/">
+    <button type="submit" class="btn btn-primary">Новое слово</button>
+</form>
+</div>
 {% endblock %}

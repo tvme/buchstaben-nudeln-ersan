@@ -47,11 +47,11 @@ class Nuudel_game():
             return 10
         return self.word
 
-    def update_category(self, category_input):    
+    def update_category(self, category_input, difficulty):    
         existing = Category.query.filter_by(category=category_input).first()
         if existing:
             return "update_category status: Категория уже существует"
-        category = Category(category=category_input)
+        category = Category(category=category_input, difficulty=difficulty)
         self.db.session.add(category)
         self.db.session.commit()
         return "update_category status: success"
@@ -94,9 +94,9 @@ if __name__ == "__main__":
             "плита", "микроволновка", "блендер"
         ]
         gm = Nuudel_game()
-        print(gm.update_category("animals"))
-        print(gm.update_category("kitchen"))
-        print(gm.update_category("tools"))
+        print(gm.update_category("animals", "easy"))
+        print(gm.update_category("kitchen", "medium"))
+        print(gm.update_category("tools", "hard"))
         print(gm.update_word(animals, "animals"))
         print(gm.update_word(tools, "tools"))
         print(gm.update_word(kitchen_items, "kitchen"))
