@@ -186,20 +186,24 @@ def submit_answer():
     hinweis_anzal = request.form.get("hinweis_anzal", "")
 
     if game.check_answer(guess.lower()) == 10:
-        try:
-            difficulty = Category.query.filter_by(category=game.category).first()
-            score = 10 - 5 * int(hinweis_anzal or 0)
-            if difficulty.difficulty == "medium":
-                score += 10
-            if difficulty.difficulty == "hard":
-                score += 20
-            success = f"Правильно! +{score}"
-            user = User.query.filter_by(name=session["user_name"]).first()
-            user.score += score
-            db.session.commit()
-        except Exception as e:
-            print(e)
-            return render_template("nuudel_play_success.html", error="Ошибка базы данных", category=game.category)
+        difficulty = Category.query.filter_by(category=game.category).first()
+        score = 10 - 5 * int(hinweis_anzal or 0)
+        if difficulty.difficulty == "medium":
+            score += 10
+        if difficulty.difficulty == "hard":
+            score += 20
+        if score <= 0:
+            score = 0
+            success = "Правильно! но слишком много подсказек"
+        else:
+            try:
+                success = f"Правильно! +{score}"
+                user = User.query.filter_by(name=session["user_name"]).first()
+                user.score += score
+                db.session.commit()
+            except Exception as e:
+                print(e)
+                return render_template("nuudel_play_success.html", error="Ошибка базы данных", category=game.category)
         return render_template("nuudel_play_success.html", success=success, category=game.category)
     else:
         feedback = "Попробуй ещё раз"
