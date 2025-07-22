@@ -18,6 +18,11 @@
   </div>
 
   <div class="mb-3">
+    <label for="password" class="form-label">Введите старый пароль:</label>
+    <input type="password" class="form-control" id="old_password" name="old_password" required>
+  </div>
+
+  <div class="mb-3">
     <label for="password" class="form-label">Введите новый пароль:</label>
     <input type="password" class="form-control" id="password" name="password" required>
   </div>
@@ -26,7 +31,11 @@
     <label for="confirm" class="form-label">Повторите новый пароль:</label>
     <input type="password" class="form-control" id="confirm" name="confirm" required>
   </div>
-
+<div class="d-flex gap-3">
   <button type="submit" class="btn btn-success" id="submit-btn">Обновить</button>
 </form>
+<form action="/user">
+  <button type="submit" class="btn btn-danger" id="submit-btn">Отменить</button>
+</form>
+</div>
 {% endblock %}

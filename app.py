@@ -116,13 +116,17 @@ def user_update():
         email = request.form.get("email", "")
         name = request.form.get("name", "")
         password = request.form.get("password", "")
+        old_password = request.form.get("old_password", "")
         confirm = request.form.get("confirm", "")
         if confirm == password:
             try:
                 user = User.query.get(session["user_id"])
-                
+
                 if not user:
-                    return render_template("login.html", error="Пользователь не найден")
+                    return render_template("user_update.html", error="Пользователь не найден")
+                
+                if not check_password_hash(user.password, old_password):
+                    return render_template("user_update.html", error="Старый пароль неверный", email=session["user_email"], name=session["user_name"])
                 
                 user.email = email
                 user.name = name
@@ -130,11 +134,11 @@ def user_update():
 
                 db.session.commit()
                 
-                session.clear()
                 session["user_email"] = email
                 session["user_name"] = name
-            except:
-                return render_template("login.html", error="Ошибка базы данных")
+            except Exception as er:
+                print(er)
+                return render_template("user_update.html", error="Ошибка базы данных", email=session["user_email"], name=session["user_name"])
         else:
             return render_template("user_update.html", error="Пароли не совпадают")
         return redirect(url_for('user_page'))
