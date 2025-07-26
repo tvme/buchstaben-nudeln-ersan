@@ -1,7 +1,9 @@
 from flask import render_template, request, redirect, url_for, session, g
-from nuudel_app import create_app
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
+from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadTimeSignature
+from flask_mail import Mail, Message
+from nuudel_app import create_app
 from nuudel_app.models import User, Category
 from nuudel_app import db
 from nuudel_app.nuudel_game import Nuudel_game
@@ -9,6 +11,21 @@ from nuudel_app.nuudel_game import Nuudel_game
 
 app = create_app()
 game = Nuudel_game()
+mail = Mail(app)
+serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+
+def send_confirmation_email(user_email):
+    token = serializer.dumps(user_email, salt='email-confirm-salt')
+    confirm_url = url_for('confirm_email', token=token, _external=True)
+    mail_html = render_template('email_confirmation.html', confirm_url=confirm_url)
+    msg = Message("Подтердите Email в Nuuel Game",
+                  recipients=[user_email],
+                  html=mail_html)
+    try:
+        mail.send(msg)
+        print('Письмо с подтверждением отправлено')
+    except Exception as e:
+        print(f"Ошибка при отправке письма: {e}")
 
 @app.before_request
 def load_logged_in_user():
@@ -153,6 +170,10 @@ def user_page():
     user = {"email": session["user_email"], "name": session["user_name"], "password": masked_password, "score": score}
     return render_template("user_page.html", user=user, feedback=f"Добро пожаловать, {session["user_name"]}!")
 
+@app.route('/confirm/<token>')
+def confirm_email(token):
+    pass
+
 @app.route("/rating")
 @login_required
 def user_table_page():
@@ -214,4 +235,6 @@ def submit_answer():
         return render_template("nuudel_play.html", scrambled_word=game.nuudel_word, feedback=feedback)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    # app.run(debug=True)
+    with app.app_context():    
+        send_confirmation_email('Ersan@solist.ru')
