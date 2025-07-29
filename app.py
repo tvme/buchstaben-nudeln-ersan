@@ -172,7 +172,7 @@ def user_page():
 
 @app.route('/confirm/<token>')
 def confirm_email(token):
-    pass
+    return "На страница ведутся работы"
 
 @app.route("/rating")
 @login_required
@@ -235,6 +235,6 @@ def submit_answer():
         return render_template("nuudel_play.html", scrambled_word=game.nuudel_word, feedback=feedback)
 
 if __name__ == "__main__":
-    # app.run(debug=True)
-    with app.app_context():    
-        send_confirmation_email('Ersan@solist.ru')
+    app.run(debug=True)
+    with app.app_context():
+        send_confirmation_email('fedorov.kolya.cat@gmail.com')
