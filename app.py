@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect, url_for, session, g
+from flask import render_template, request, redirect, url_for, session, g, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadTimeSignature
@@ -43,7 +43,10 @@ def login_required(view):
     def wrapped_view(**kwargs):
         if g.user is None:
             return redirect(url_for("login"))
-        return view(**kwargs)
+        elif g.user.email_confirmed:
+            return view(**kwargs)
+        else:
+            return render_template("home.html", feedback="Вам отправлен email, перейдите по ссылке для активации аккаунта.")
     return wrapped_view
 
 @app.route("/", methods=["GET", "POST"])
@@ -87,7 +90,9 @@ def login():
             session["user_id"] = user_data.id
             session["user_email"] = user_data.email
             session["user_name"] = user_data.name
-            return redirect(url_for("user_page"))
+            session["email_confirmed"] = False
+            send_confirmation_email(session["user_email"])
+            return redirect(url_for("home", feedback="Вам отправлен email, перейдите по ссылке для активации аккаунта."))
         if mode == "login":
             try:
                 user_login = User.query.filter_by(email=email).first()
@@ -172,7 +177,26 @@ def user_page():
 
 @app.route('/confirm/<token>')
 def confirm_email(token):
-    return "На страница ведутся работы"
+    try:
+        email = serializer.loads(
+            token,
+            salt='email-confirm-salt',
+            max_age=app.config['TOKEN_MAX_AGE_SECONDS']
+        )
+
+    except SignatureExpired: 
+        return render_template("login.html", error='Срок действия ссылки истек. Пожалуйста, запросите новую.')
+    except (BadTimeSignature, Exception):
+        flash('Неверная или поврежденная ссылка для подтверждения.', 'danger')
+        return redirect(url_for('login'))
+    user = User.query.filter_by(email=email).first_or_404()
+    if user.email_confirmed:
+        flash('Аккаунт уже подтвержден.', 'info')
+    else:
+        user.email_confirmed = True
+        db.session.commit()
+        session["email_confirmed"] = True
+    return redirect(url_for('home'))
 
 @app.route("/rating")
 @login_required
@@ -236,5 +260,3 @@ def submit_answer():
 
 if __name__ == "__main__":
     app.run(debug=True)
-    with app.app_context():
-        send_confirmation_email('fedorov.kolya.cat@gmail.com')

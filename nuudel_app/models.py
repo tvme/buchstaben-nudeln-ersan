@@ -4,6 +4,7 @@ class User(db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
+    email_confirmed = db.Column(db.Boolean, nullable=False, default=False)
     name = db.Column(db.String(50), nullable=False)
     password = db.Column(db.String(200), nullable=False)  # Store hashed passwords
     score = db.Column(db.Integer, default=0)
