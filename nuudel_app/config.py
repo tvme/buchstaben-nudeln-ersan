@@ -19,4 +19,4 @@ class Config:
     MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")
     MAIL_DEFAULT_SENDER = ('Nuudel Game', os.getenv("MAIL_USERNAME"))
     # Время жизни токена для подтверждения email (например, 1 час)
-    TOKEN_MAX_AGE_SECONDS = 10
+    TOKEN_MAX_AGE_SECONDS = 3600

@@ -92,7 +92,7 @@ def login():
             session["user_name"] = user_data.name
             session["email_confirmed"] = False
             send_confirmation_email(session["user_email"])
-            return redirect(url_for("home", feedback="Вам отправлен email, перейдите по ссылке для активации аккаунта."))
+            return render_template("home.html", feedback="Вам отправлен email, перейдите по ссылке для активации аккаунта.")
         if mode == "login":
             try:
                 user_login = User.query.filter_by(email=email).first()
@@ -116,16 +116,17 @@ def logout():
     session.clear()
     return redirect(url_for('home'))
 
-@app.route("/delete_akunt")
+@app.route("/delete_account")
 @login_required
-def delete_akunt():
+def delete_account():
     user = User.query.get(session["user_id"])
     if user:
         try:
             db.session.delete(user)
             db.session.commit()
             session.clear()
-            return render_template("home.html", success = "Пользователь был удалён")
+            flash('Аккаунт успешно удален.', 'success')
+            return redirect(url_for('home'))
         except:
             return render_template("home.html", error="Ошибка базы данных")
     else:
@@ -196,7 +197,7 @@ def confirm_email(token):
         user.email_confirmed = True
         db.session.commit()
         session["email_confirmed"] = True
-    return redirect(url_for('home'))
+    return render_template('home.html', success = "Аккаунт подтвержден")
 
 @app.route("/rating")
 @login_required
