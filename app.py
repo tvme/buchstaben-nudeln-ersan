@@ -125,7 +125,7 @@ def delete_account():
             db.session.delete(user)
             db.session.commit()
             session.clear()
-            flash('Аккаунт успешно удален.', 'success')
+            flash('Аккаунт успешно удален.', 'alert alert-success mt-3')
             return redirect(url_for('home'))
         except:
             return render_template("home.html", error="Ошибка базы данных")
@@ -212,7 +212,7 @@ def user_table_page():
 @app.route("/play", methods=["POST"])
 @login_required
 def play():
-    category = request.form.get("category", "")
+    category = request.form.get("category", "animals")
     print(category)
     try:
         scrambled_word = game.get_nuudel_word(category)

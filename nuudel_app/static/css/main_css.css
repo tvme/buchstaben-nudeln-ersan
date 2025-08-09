@@ -1,6 +1,30 @@
 .sustem{
     opacity: 0;
 }
-.button_logout{
-    margin-top: 2%;
+/* .flash {
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    font-family: sans-serif;
+}
+
+/* Стилизация для успешного сообщения */
+.success {
+    background-color: #d4edda; /* Светло-зелёный фон */
+    color: #155724;          /* Тёмно-зелёный текст */
+    border: 1px solid #c3e6cb; /* Зелёная рамка */
+}
+
+/* Стилизация для сообщения об ошибке */
+.error {
+    background-color: #f8d7da; /* Светло-красный фон */
+    color: #721c24;          /* Тёмно-красный текст */
+    border: 1px solid #f5c6cb; /* Красная рамка */
+}
+
+/* Стилизация для информационного сообщения */
+.info {
+    background-color: #cce5ff; /* Светло-синий фон */
+    color: #004085;          /* Тёмно-синий текст */
+    border: 1px solid #b8daff; /* Синяя рамка */
 }
