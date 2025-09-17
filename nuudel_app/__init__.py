@@ -19,8 +19,35 @@ def create_app():
 
     with app.app_context():
         from . import models  # Import models to register them with the app
+        from .nuudel_game import Nuudel_game
 
         db.create_all()  # Create database tables
+        animals = [
+            "собака", "кошка", "лошадь", "корова", "свинья",
+            "овца", "коза", "курица", "утка", "гусь",
+            "тигр", "лев", "волк", "медведь", "заяц",
+            "лось", "белка", "слон", "жираф"
+        ]
+        tools = [
+            "молоток", "отвёртка", "пила", "гвоздодёр", "пассатижи",
+            "шуруповёрт", "дрель", "стаместка", "рубанок",
+            "напильник", "штангенциркуль", "лом", "паяльник",
+            "ножовка", "уровень", "рулетка"
+        ]
+        kitchen_items = [
+            "кастрюля", "сковорода", "чайник", "тарелка", "чашка",
+            "ложка", "вилка", "нож", "миска",
+            "терка", "половник", "дуршлаг", "холодильник", "духовка",
+            "плита", "микроволновка", "блендер"
+        ]
+        gm = Nuudel_game()
+
+        print(gm.update_category("animals", "easy"))
+        print(gm.update_category("kitchen", "medium"))
+        print(gm.update_category("tools", "hard"))
+        print(gm.update_word(animals, "animals"))
+        print(gm.update_word(tools, "tools"))
+        print(gm.update_word(kitchen_items, "kitchen"))
         print("DB created or already exists")
 
     return app
