@@ -10,9 +10,11 @@ class Config:
     postgres_url = os.getenv('POSTGRES_URL', 'sqlite:///nuudel.db')
     # Исправляем формат URL для SQLAlchemy
     if postgres_url.startswith('postgres://'):
+        print(f"Fixing postgres URL format for SQLAlchemy {postgres_url[:30]}...")  
         postgres_url = postgres_url.replace('postgres://', 'postgresql://', 1)
+        print(f"Fixed URL: {postgres_url[:30]}...")
     SQLALCHEMY_DATABASE_URI = postgres_url
-    
+
     SQLALCHEMY_DATABASE_URI = os.getenv('POSTGRES_URL', 'sqlite:///nuudel.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SECRET_KEY = os.getenv("SECRET_KEY")
