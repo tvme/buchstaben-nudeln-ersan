@@ -4,7 +4,7 @@ import os
 load_dotenv()
 
 class Config:
-    SERVER_NAME = 'localhost:5000'
+    SERVER_NAME = os.getenv('SERVER_NAME', 'localhost:5000')
     PREFERRED_URL_SCHEME = 'http'
 
     # Исправляем формат URL для SQLAlchemy
