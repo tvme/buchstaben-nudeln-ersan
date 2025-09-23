@@ -235,6 +235,9 @@ def play():
 @app.route("/submit_answer", methods=["POST"])
 @login_required
 def submit_answer():
+    logger.info("🚀 Hello Vercel, logging works!")
+    logger.debug("This DEBUG log may not appear on Vercel")
+    logger.error("❌ This is an ERROR log")
     guess = request.form.get("guess", "")
     logger.debug(f"Пользователь {session['user_name']} сделал попытку: {guess}")
     logger.debug(f"Правильный ответ: {game.word} | Категория: {game.category} | nuudel_word: {game.nuudel_word}")
