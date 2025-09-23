@@ -7,6 +7,7 @@ from nuudel_app import create_app
 from nuudel_app.models import User, Category
 from nuudel_app import db
 from nuudel_app.nuudel_game import Nuudel_game
+from nuudel_app.game_logger import logger
 
 
 app = create_app()
@@ -23,9 +24,9 @@ def send_confirmation_email(user_email):
                   html=mail_html)
     try:
         mail.send(msg)
-        print('Письмо с подтверждением отправлено')
+        logger.info(f"Письмо с подтверждением отправлено на {user_email}.")
     except Exception as e:
-        print(f"Ошибка при отправке письма: {e}")
+        logger.error(f"Ошибка при отправке письма: {e}", exc_info=True)
 
 @app.before_request
 def load_logged_in_user():
@@ -58,14 +59,14 @@ def home():
         category_for_tabel = Category.query.all()
     except:
         return render_template("login.html", error="Ошибка базы данных")
-    print(category_for_tabel)
+    logger.debug(f"Доступные категории: {category_for_tabel}")
     return render_template("home.html", category_for_tabel=category_for_tabel, feedback="Добро пожаловать!")
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         mode = request.form.get("mode")
-        print(f"Login mode: {mode}")
+        logger.debug(f"Login mode: {mode}")
         email = request.form.get("email", "")
         password = request.form.get("password", "")
         if mode == "register":
@@ -126,8 +127,10 @@ def delete_account():
             db.session.commit()
             session.clear()
             flash('Аккаунт успешно удален.', 'alert alert-success mt-3')
+            logger.info(f"Пользователь {user.email} удалил свой аккаунт.")
             return redirect(url_for('home'))
-        except:
+        except Exception as e:
+            logger.error(f"Ошибка при удалении аккаунта пользователя {user.email}: {e}.", exc_info=True)
             return render_template("home.html", error="Ошибка базы данных")
     else:
         return render_template("home.html", error="Пользователь не найден")
@@ -160,7 +163,7 @@ def user_update():
                 session["user_email"] = email
                 session["user_name"] = name
             except Exception as er:
-                print(er)
+                logger.error(f"Ошибка при обновлении данных пользователя {session['user_email']} {er}.", exc_info=True)
                 return render_template("user_update.html", error="Ошибка базы данных", email=session["user_email"], name=session["user_name"])
         else:
             return render_template("user_update.html", error="Пароли не совпадают")
@@ -206,14 +209,14 @@ def user_table_page():
         players = User.query.order_by(User.score.desc()).all()
     except:
         return render_template("login.html", error="Ошибка базы данных")
-    print(players)
+    logger.debug(f"Пользователи для таблицы рейтинга: {players}")
     return render_template("user_table_page.html", players=players)
 
 @app.route("/play", methods=["POST"])
 @login_required
 def play():
     category = request.form.get("category", "animals")
-    print(category)
+    logger.info(f"Пользователь {session['user_name']} начал игру в категории {category}.")  
     try:
         scrambled_word = game.get_nuudel_word(category)
 
@@ -226,13 +229,15 @@ def play():
         return render_template("nuudel_play.html", scrambled_word=scrambled_word, word=game.word)
     
     except Exception as er:
-        print(er)
+        logger.error(f"Ошибка при получении слова для категории {category}.", exc_info=True)    
         return render_template("nuudel_play.html", error="Ошибка базы данных")
 
 @app.route("/submit_answer", methods=["POST"])
 @login_required
 def submit_answer():
     guess = request.form.get("guess", "")
+    logger.debug(f"Пользователь {session['user_name']} сделал попытку: {guess}")
+    logger.debug(f"Правильный ответ: {game.word} | Категория: {game.category} | nuudel_word: {game.nuudel_word}")
     hinweis_anzal = request.form.get("hinweis_anzal", "")
 
     if game.check_answer(guess.lower()) == 10:
@@ -252,7 +257,7 @@ def submit_answer():
                 user.score += score
                 db.session.commit()
             except Exception as e:
-                print(e)
+                logger.error(f"Ошибка при обновлении счета пользователя {session['user_name']}.", exc_info=True)
                 return render_template("nuudel_play_success.html", error="Ошибка базы данных", category=game.category)
         return render_template("nuudel_play_success.html", success=success, category=game.category)
     else:
