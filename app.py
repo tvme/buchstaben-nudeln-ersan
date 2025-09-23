@@ -226,6 +226,11 @@ def play():
         if scrambled_word == "error: Not_word":
             return render_template("nuudel_play.html", error="Нет слов в этой категории.")
         
+        # сохраняем состояние игры в session
+        session["correct_word"] = game.word
+        session["category"] = game.category
+        session["nuudel_word"] = game.nuudel_word
+        
         return render_template("nuudel_play.html", scrambled_word=scrambled_word, word=game.word)
     
     except Exception as er:
@@ -235,16 +240,16 @@ def play():
 @app.route("/submit_answer", methods=["POST"])
 @login_required
 def submit_answer():
-    logger.info("🚀 Hello Vercel, logging works!")
-    logger.debug("This DEBUG log may not appear on Vercel")
-    logger.error("❌ This is an ERROR log")
     guess = request.form.get("guess", "")
+    correct_word = session.get("correct_word", "")
+    category = session.get("category", "")
+    nuudel_word = session.get("nuudel_word", "")
     logger.debug(f"Пользователь {session['user_name']} сделал попытку: {guess}")
-    logger.debug(f"Правильный ответ: {game.word} | Категория: {game.category} | nuudel_word: {game.nuudel_word}")
+    logger.debug(f"Правильный ответ: {correct_word} | Категория: {category} | nuudel_word: {nuudel_word}")
     hinweis_anzal = request.form.get("hinweis_anzal", "")
 
-    if game.check_answer(guess.lower()) == 10:
-        difficulty = Category.query.filter_by(category=game.category).first()
+    if guess.lower() == correct_word.lower():
+        difficulty = Category.query.filter_by(category=category).first()
         score = 10 - 5 * int(hinweis_anzal or 0)
         if difficulty.difficulty == "medium":
             score += 10
