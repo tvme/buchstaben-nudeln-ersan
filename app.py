@@ -230,7 +230,7 @@ def play():
         session["correct_word"] = game.word
         session["category"] = game.category
         session["nuudel_word"] = game.nuudel_word
-        
+
         return render_template("nuudel_play.html", scrambled_word=scrambled_word, word=game.word)
     
     except Exception as er:
@@ -266,11 +266,11 @@ def submit_answer():
                 db.session.commit()
             except Exception as e:
                 logger.error(f"Ошибка при обновлении счета пользователя {session['user_name']}.", exc_info=True)
-                return render_template("nuudel_play_success.html", error="Ошибка базы данных", category=game.category)
-        return render_template("nuudel_play_success.html", success=success, category=game.category)
+                return render_template("nuudel_play_success.html", error="Ошибка базы данных", category=category)
+        return render_template("nuudel_play_success.html", success=success, category=category)
     else:
         feedback = "Попробуй ещё раз"
-        return render_template("nuudel_play.html", scrambled_word=game.nuudel_word, feedback=feedback)
+        return render_template("nuudel_play.html", scrambled_word=nuudel_word, feedback=feedback)
 
 if __name__ == "__main__":
     app.run(debug=True)
